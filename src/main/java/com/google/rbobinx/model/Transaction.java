@@ -18,7 +18,7 @@ public class Transaction {
         this.type = type;
         this.parent = parent;
         this.sum = new AtomicDouble(amount);
-                this.amount = amount;
+        this.amount = amount;
     }
 
     @JsonIgnore
