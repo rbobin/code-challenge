@@ -27,9 +27,31 @@ repositories {
 	mavenCentral()
 }
 
+sourceSets {
+	functionalTest {
+		java {
+			compileClasspath += main.output + test.output
+			runtimeClasspath += main.output + test.output
+			srcDir file('src/functional-test/java')
+		}
+		resources.srcDir file('src/functional-test/resources')
+	}
+}
+
 configurations {
+	functionalTestCompile.extendsFrom testCompile
+	functionalTestRuntime.extendsFrom testRuntime
 	providedRuntime
 }
+
+task functionalTest(type: Test) {
+	testClassesDir = sourceSets.functionalTest.output.classesDir
+	classpath = sourceSets.functionalTest.runtimeClasspath
+	outputs.upToDateWhen { false }
+}
+
+check.dependsOn functionalTest
+functionalTest.mustRunAfter test
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
@@ -40,10 +62,3 @@ dependencies {
 	testCompile('com.owlike:genson:1.4')
 }
 
-
-eclipse {
-	classpath {
-		 containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
-		 containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
-	}
-}
